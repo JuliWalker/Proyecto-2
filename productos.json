@@ -1,0 +1,11 @@
+[
+{"id": "1", "nombre": "agua", "precio": "80", "stock": "300", "vegano": "true"},
+{"id": "2", "nombre": "soda", "precio": "100", "stock": "300", "vegano": "true"},
+{"id": "3", "nombre": "cerveza", "precio": "130", "stock": "300", "vegano": "true"},
+{"id": "4", "nombre": "copa de vino", "precio": "150", "stock": "300", "vegano": "true"},
+{"id": "5", "nombre": "vegan burger", "precio": "450", "stock": "300", "vegano": "true"},
+{"id": "6", "nombre": "papas fritas", "precio": "200", "stock": "300", "vegano": "true"},
+{"id": "7", "nombre": "provoleta", "precio": "250", "stock": "300", "vegano": "false"},
+{"id": "8", "nombre": "falafel", "precio": "250", "stock": "300", "vegano": "true"},
+{"id": "9", "nombre": "carrot cake", "precio": "230", "stock": "300", "vegano": "true"}
+]

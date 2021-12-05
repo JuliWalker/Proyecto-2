@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El bar de moncholo</title>
+    <link rel="stylesheet" href="Boostrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <section class="container-md text-center">
+        <h1>
+            Bienvenido al bar de moncholo!
+        </h1>
+    </section>    
+
+    <section class="container-md">
+        <div class="formu">
+            <h3>Te pedimos primero que ingreses tu nombre y número de mesa:</h3>
+            <label for="nombre" class="form-label"></label>
+            <input type="text" class="form-control" id="nombre" placeholder="Nombre">
+        </div>
+
+        <div class="formu">
+            <select class="form-select" aria-label="Default select example" id="numeroMesa">
+                <option selected>Numero de mesa</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+
+        <div class="formu">
+            <select class="form-select" aria-label="Default select example" id="metodoPago">
+                <option selected>Metodo de pago</option>
+                <option value="1">Efectivo</option>
+                <option value="2">Debito</option>
+                <option value="3">MercadoPago</option>
+            </select>
+        </div>
+    </section>
+
+    <div class="container-md">
+        <h2>
+            Nuestro Menu:
+        </h2>
+    </div>
+
+    <div id="menu" class="container-md">
+    </div>
+
+    <div id="detallePedido" class="container-md">
+        <h2>Tu Pedido:</h2>
+    </div>
+
+    <div id="subTotal" class="container-md">
+    </div>
+
+<!-- agregamos un boton para confirmar el pedido -->
+    <div class="container-md">
+        <button type="button" class="btn btn-success" id="confirmarPedido">confirmar pedido</button>
+    </div>
+
+    
+
+    <div class="container-md">
+        <p> este es un div generico donde iria el footer de la pagina </p>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="objetos.js"></script>
+    <script src="main.js"></script>
+
+</body>
+</html>

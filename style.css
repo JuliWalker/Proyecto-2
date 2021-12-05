@@ -1,0 +1,35 @@
+.caja {
+    background-color:rgb(156, 204, 144);
+    padding: 8px;
+    margin: 8px;
+    border: 5px solid #000;
+    border-radius: 10px;
+}
+
+.color {
+    color: rgb(12, 11, 94);
+}
+
+#menu{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.formu{
+    margin-bottom: 3vh;
+    width: 100%;
+    text-align: center;
+}
+
+.confirmacion {
+    text-align: center;
+    background-color:rgb(156, 204, 144);
+    padding: 8px;
+    margin: 8px;
+    border: 5px solid #000;
+    border-radius: 10px;
+}
+
