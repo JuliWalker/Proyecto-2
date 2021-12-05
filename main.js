@@ -210,3 +210,5 @@ $(document).ready(()=>{
 // falta configurar los alert para hacerlos personalizados y mas lindos!
 // armar una segunda pestaña donde se puedan ver todos los pedidos y filtrarlos. Y que tambien permita borrar pedidos de a uno o todo el local storage.
 // me falta poner un filtro de visualizacion para productos veganos. O sino sacar eso del producto.
+
+console.log (arrayClientes);
