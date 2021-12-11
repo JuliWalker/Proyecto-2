@@ -1,0 +1,2 @@
+
+//{"id": "9", "nombre": "carrot cake", "precio": "230", "stock": "300", "vegano": "true", "rutaImg": "/clase 17/fotos/cake.jpg", "descImg": "torta de zanahoria"}
