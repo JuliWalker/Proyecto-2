@@ -13,15 +13,23 @@
 #menu{
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    padding: 10px;
-    margin-bottom: 10px;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#listaPedidos{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    margin-bottom: 20px;
+    text-align: center;
 }
 
 .formu{
     margin-bottom: 3vh;
     width: 100%;
-    text-align: center;
+    text-align: left;
 }
 
 .confirmacion {
@@ -33,3 +41,10 @@
     border-radius: 10px;
 }
 
+.lista {
+    text-align: left;
+}
+
+.delivered {
+    background-color: lightgreen;
+}

@@ -1,20 +1,23 @@
-// declaración de arreglos que vamos a utilizar
+// inicializamos todas las variables y arreglos globales que vamos a utilizar:
 
 let arrayProductos = [];
-let arrayClientes = [];
+let arrayPedidosCompletos = [];
 let arrayPedidos = [];
 let subtotal = 0;
 let metodo = "";
-let mesa = 0;
+let numeroMesa = 0;
 let nombre = "";
 let flag = [];
+let idPedido = 0;
+let filtrado = [];
 
+// usamos la funcion ready para dejar que primero carguen las estructuras de HTML completas y poder trabajar sobre ellas con nuestro JS
 
 $(document).ready(()=>{
 
-// una vez cargada la pagina agregamos el menu de forma dinamica y les asignamos botones con el ID de cada producto
+    // una vez cargada la pagina agregamos el menu de forma dinamica y les asignamos botones con el ID de cada producto
 
-// traemos todos los productos utilizando AJAX:
+    // para traer todos los productos utilizamos AJAX, de esta forma el proyexto es escalable y vinculable a una base de datos externa:
 
     const URLGET = "productos.json"
     $.get(URLGET, function (respuesta, estado) {
@@ -24,81 +27,100 @@ $(document).ready(()=>{
 
             for (let i = 0 ;i< productos.length ;i++){
 
-// parseo el precio y el stock porque me los devuelve en string en vez de en numero
+                // parseo el precio y el stock porque me los devuelve en string en vez de en numero
+
                 let precio = parseInt(productos[i].precio);
                 let stock = parseInt(productos[i].stock);
 
-// armo mi producto y los presento en cajitas en el HTML tipo menu.                
+                // armo mi array de productos               
 
-                let objetoMenu = new Producto(productos[i].id,productos[i].nombre,precio,stock,productos[i].vegano);
+                let objetoMenu = new Producto(productos[i].id,productos[i].nombre,precio,stock,productos[i].vegano,productos[i].rutaImg,productos[i].descImg);
 
                 arrayProductos.push(objetoMenu);
+
+                // La creación del arreglo "flag" luego la voy a usar para calcular la cantidad de productos en el carrito.
 
                 let a = 0;
                 flag.push(a);
 
+                // los presento en cajitas en el HTML para que el usuario pueda seleccionarlos
+                // La generación de todo el HTML intenté cargarla como una función de la clase "Producto" pero me tiraba error asi que escribi todo el codigo aca.
+
                 $("#menu").append(
-        
-
-
-// modificar el estilo de esta caja para cambiar toda la visualizacion de la pagina
-
-
-
-                    `<div id="div${objetoMenu.id}" class="caja">
-                        ${objetoMenu.showProducto()}
+                    
+                    `<div id="div${objetoMenu.id}" class="card">
+                    <img src="${objetoMenu.rutaImg}" class="card-img-top" alt="${objetoMenu.descImg}">
+                    <div class="card-body">
+                        <h5 class="card-title">${objetoMenu.id}, ${objetoMenu.nombre}</h5>
+                        <ul class="lista">
+                            <li>Precio: ${objetoMenu.precio}</li> 
+                            <li>Apto vegano?: ${objetoMenu.getVegano()}</li>
+                        </ul>
                         <button type="button" class="btn btn-dark" id= "btn${objetoMenu.id}">Cargar al pedido</button>
+                    </div>
                     </div>            
                     `
                 );
         
-// damos funcionalidad a los botones de "agregar pedido" para sumar los productos al array de pedidos
+                // damos funcionalidad a los botones de "agregar pedido" para ir sumando los productos al carrito.
         
                 $(`#btn${objetoMenu.id}`).on('click',function () {
 
-// NECESITO PRIMERO CAPTURAR LOS DATOS DEL CLIENTE PARA PODER PASARLO ACA!  -   O PODEMOS HACER UN ARRAY DE PRODUCTOS PEDIDOS PARA UN SOLO CLIENTE Y LUEGO UN ARRAY DE PEDIDOS COMPLETOS
-// FALTA PODER SUMAR PRODUCTOS IGUALES Y QUE NO APAREZCAN EN LINEAS DIFERENTES.
+                    // cuando el producto es sumado al carrito pasa de ser un objeto "producto" a otro "producto pedido" que contempla la cantidad pedida ademas del tipo de producto.
+                    // aca usamos el id del producto y el arreglo "flag" para poder contar cuantas veces agregaron el mismo producto al carrito.
 
-                    let i = objetoMenu.id;
+                    let i = objetoMenu.id - 1;
                     flag[i] = flag[i] + 1;
-                    console.log(flag);
 
-                    if (flag[i] = 1) {
+                    // Si el producto se agrega por primera vez lo sumamos a la seccion de HTML destinada al pedido
+                    // Ademas de cargarlo al HTML tambien lo sumamos a nuestro array de pedidos para luego guardarlo en el local storage
+
+                    if (flag[i] == 1) {
 
                         let capturarProducto = new ProductoPedido (objetoMenu, 1)
                         subtotal = subtotal + objetoMenu.precio;
                         arrayPedidos.push(capturarProducto);
-
-                        // Hacemos que los pedidos se visualicen de forma dinamica en la pagina a medida que los van agregando
                                 
                         $("#detallePedido").append(
                                 
-                            `<div id="Pedido${objetoMenu.id}">
-                                ${objetoMenu.showProducto()}
+                            `<div id="Pedido${capturarProducto.Producto.id}">
+                                ${capturarProducto.showProducto()}
                             </div>            
                             `
                         );
+
+                    // en cambio si el producto ya estaba en el carrito, pisamos el HTML sumandole 1 a la cantidad pedida.
+                    // hacemos esto mismo con el array de los pedidos, buscamos el producto pedido dentro y le sumamos 1.
 
                     } else {
                         
-                        const filtrado = arrayPedidos.filter( ProductoPedido => ProductoPedido.Producto.id !=i);
-                        let capturarProducto2 = new ProductoPedido (objetoMenu, flag[i]);
-                        filtrado.push(capturarProducto2);
+                        filtrado = [];
+                        let m = i+1;
+
+                        for (let j=0; j < arrayPedidos.length; j++) {  
+                            if (arrayPedidos[j].Producto.id == m) {
+                            } else {
+                                filtrado.push(arrayPedidos[j]);
+                            }
+
+                        }
+
                         arrayPedidos = filtrado;
+
+                        let capturarProducto2 = new ProductoPedido (objetoMenu, flag[i]);
+                        arrayPedidos.push(capturarProducto2);
+                        subtotal = subtotal + objetoMenu.precio;
 
                         $(`#Pedido${objetoMenu.id}`).html(
                                 
-                            `<div id="Pedido${objetoMenu.id}">
-                                ${objetoMenu.showProducto()}
+                            `<div id="Pedido${capturarProducto2.Producto.id}">
+                                ${capturarProducto2.showProducto()}
                             </div>            
                             `
                         );
+                    }        
 
-                    }
-        
-
-              
-// Calculamos y mostramos el precio total de la compra para que el cliente pueda revisarlo a medida que agrega productos
+                    // Calculamos y mostramos el precio total de la compra para que el cliente pueda revisarlo a medida que agrega productos
         
                     $("#subTotal").html(
                         `<h3> El precio de tu compra es: ${subtotal} </h3>`
@@ -109,40 +131,40 @@ $(document).ready(()=>{
     })
 
 
-    //Capturamos la info del formulario de nombre
+    //Capturamos la info del formulario de nombre - Usamos la función "Change" para capturar el nombre antes de apretar el boton de enviar (la idea es dejar el boton de enviar para la info completa de peiddo y cliente)
+
     let miFormulario1 = document.getElementById("nombre");
     miFormulario1.addEventListener('change', validarFormulario1);
 
     function validarFormulario1(e){
         //Obtenemos el elemento desde el cual se disparó el evento
-        let formulario = e.target
+        let formulario = e.target;
         //Obtengo el valor del input type="text" del nombre
-        nombre = formulario.value
-        console.log(nombre); 
+        nombre = formulario.value;
     }
 
     //Capturamos la info del formulario de numero de mesa
+
     let miFormulario2 = document.getElementById("numeroMesa");
     miFormulario2.addEventListener('change', validarFormulario2);
 
     function validarFormulario2(e){
         //Obtenemos el elemento desde el cual se disparó el evento
-        let formulario = e.target
+        let formulario = e.target;
         //Obtengo el valor del selector de numero de mesa
-        numeroMesa = formulario.value; 
-        console.log(numeroMesa);
+        numeroMesa = formulario.value;
     }
 
 
     //Capturamos la info del formulario de numero de metodo de pago
+
     let miFormulario3 = document.getElementById("metodoPago");
     miFormulario3.addEventListener('change', validarFormulario3);
 
     function validarFormulario3(e){
         //Obtenemos el elemento desde el cual se disparó el evento
-        let formulario = e.target
+        let formulario = e.target;
         let auxiliarMetodo = parseInt(formulario.value);
-        console.log(auxiliarMetodo);
         //Obtengo el valor del selector de metodo de pago
         switch (auxiliarMetodo) {
             case 1:
@@ -157,31 +179,32 @@ $(document).ready(()=>{
             default:
                 metodo = "error";
         }
-        console.log(metodo);
     }
 
-    // me esta faltando usar la info del formulario y del pedido para armar el array de cliente y de pedido y guardarlo en el local storage
-
-    // el boton de confirmar limpia todo el codigo del body y deja solo un mensaje de confirmación
+    // Una vez que se apreta "confirmar pedido" cargamos los datos del cliente, metodo de pago y el array de productos elegidos en un nuevo objeto llamado "pedido completo"
 
     $(`#confirmarPedido`).on('click',function () {
         
-
         // confirmamos que hayan llenado bien el formulario del cliente
 
         if (nombre == "" || numeroMesa == "" || numeroMesa == "Numero de mesa" || metodo == "error" || metodo == "") {
-            alert ("faltan datos del cliente");
-            console.log(nombre);
-            console.log(metodo);
-            console.log(numeroMesa);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de envio',
+                text: 'Faltan datos del cliente',
+              })
         }
 
         else {
 
-            // confirmamos que hayan incluido al menos un articulo en el carrito
+            // confirmamos que hayan incluido al menos un producto en el carrito
 
             if (arrayPedidos.length == 0)  {
-                alert ("no incluiste nada en tu pedido");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de envio',
+                    text: 'No agregaste ningun producto',
+                  });
             }   
 
             // si completaron bien todos los datos entonces armamos el objeto de cliente con los datos del formulario y el objeto pedido con todos los datos.
@@ -189,24 +212,97 @@ $(document).ready(()=>{
 
             else {
 
-                new Cliente ()
+                //armo el cliente con los datos del formulario
 
-                // localStorage.setItem('arregloPedidos', true);
+                let cliente = new Cliente (nombre,numeroMesa);
+                
+                // reviso el local storage para ver si habia items guardados
+
+                let localItems = JSON.parse(localStorage.getItem('storageItems'));
+                let localGet = [];
+
+                // Si habia items guardados los recupero en un arrray "localget"
+
+                if (localItems === null) {
+                    console.log("primeraIteracion");
+                } else {    
+                    for (let i=0; i < localItems; i++) {
+                        let localGetUnidad = JSON.parse(localStorage.getItem(i));
+                        localGet.push(localGetUnidad);
+                        console.log(localGet);
+                    }
+                }
+                
+                // aca se me complico con guardar en el local storage y termine separando cada vez que guardaba con un key diferente para guardar todos los pedidos con una key nueva
+                // tambien acumule otra key que me decia cuantos elementos tenia guardados.
+
+                if (localItems === null) {
+                    idPedido = 1;
+                } else {
+                    idPedido = localGet.length + 1;
+                }
+
+                // aca generlo el nuevo pedido y lo guardo en un array junto con todo lo que tenia en local storage.
+
+                let pedidoCompleto = new Pedido (idPedido, cliente, arrayPedidos, metodo, subtotal);
+                
+                if (localItems === null) {
+                    arrayPedidosCompletos.push(pedidoCompleto);
+                    console.log(arrayPedidosCompletos);
+                } else {
+                    for (let i=0; i < localItems; i++) {
+                        arrayPedidosCompletos.push(localGet[i]);
+                    }
+                    arrayPedidosCompletos.push(pedidoCompleto);
+                    console.log(arrayPedidosCompletos);
+                }
+
+                // aca guardo todo en el local storage, primero guardo todo lo que ya estaba y le sumo el nuevo pedido.
+
+                for (let h=0; h < arrayPedidosCompletos.length; h++) {
+                    let localSave = JSON.stringify(arrayPedidosCompletos[h]);
+                    console.log(localSave);
+                    localStorage.setItem(h,localSave);
+                    localStorage.setItem('storageItems',h+1)
+                }
+
+                //aca ya termino de guardar todo en el local storage y le doy la alerta al cliente de que todo se guardo bien
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Tu pedido fue guardado correctamente',
+                });
+
+                
+                //aca limpio la parte del pedido del HTML y re-inicializo todas las variables y el formulario para poder cargar nuevos pedidos
 
 
-                $("body").html(
-                `<div class="confirmacion">
-                <h3>Muchas gracias tu pedido ha sido confirmado</h3>
-                </div>`)
+                $("#detallePedido").html(
+                    `<h2>Tu Pedido:</h2>
+                    `)
+                
+                arrayProductos = [];
+                arrayPedidosCompletos = [];
+                arrayPedidos = [];
+                subtotal = 0;
+                metodo = "";
+                numeroMesa = 0;
+                nombre = "";
+                for (let i=0; i < flag.length; i++) {
+                    flag[i] = 0;
+                }
+
+                $("#subTotal").html(
+                    `<h3> El precio de tu compra es: ${subtotal} </h3>`
+                    )
+
+                document.getElementById('formulario').reset();
             }
         }
     }) 
-
 })
 
-
-
-// falta ver donde almacenamos el pedido cuando damos confirmar - Meterlo en el local Storage
-// falta configurar los alert para hacerlos personalizados y mas lindos!
-// armar una segunda pestaña donde se puedan ver todos los pedidos y filtrarlos. Y que tambien permita borrar pedidos de a uno o todo el local storage.
-// me falta poner un filtro de visualizacion para productos veganos. O sino sacar eso del producto.
+// algunas ideas me quedaron pendientes pero no llegue por temas de tiempo:
+// hacer un contador de stock que va bajando la cantidad con respecto a la cantidad original
+// cuando llega a menos de 5 unidades empezar a tirar alertas con las unidades restantes
+// Tambien en la pestaña de facturación estaria bueno incluir todos los stocks consumidos ademas del dinero facturado.
